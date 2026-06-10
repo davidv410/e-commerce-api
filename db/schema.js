@@ -9,5 +9,6 @@ export const users = pgTable('users', {
     email: varchar('email', { length: 255 }).notNull().unique(),
     password: varchar('password', { length: 255 }).notNull(),
     role: rolesEnum('role').notNull().default("user"),
-    createdAt: timestamp('created_at').defaultNow()
+    createdAt: timestamp('created_at').defaultNow(),
+    refreshToken: varchar('refresh_token', { length: 500 })
 })
