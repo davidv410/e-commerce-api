@@ -1,9 +1,10 @@
 import 'dotenv/config'
 import express from 'express'
 import cookieParser from 'cookie-parser'
-import signup from './routes/signup.js'
-import login from './routes/login.js'
-import refresh from './routes/refresh.js'
+import signup from './routes/auth/signup.js'
+import login from './routes/auth/login.js'
+import logout from './routes/auth/logout.js'
+import refresh from './routes/auth/refresh.js'
 
 const app = express()
 
@@ -14,6 +15,7 @@ app.use(cookieParser())
 
 app.use('/sign-up', signup)
 app.use('/login', login)
+app.use('/logout', logout)
 app.use('/refresh', refresh)
 
 app.listen(PORT, () => {

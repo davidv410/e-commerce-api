@@ -1,10 +1,10 @@
 import express from 'express'
-import { loginSchema } from '../validation/validation.js'
-import { db } from '../db/db.js'
-import { users } from '../db/schema.js'
+import { loginSchema } from '../../validation/validation.js'
+import { db } from '../../db/db.js'
+import { users } from '../../db/schema.js'
 import { eq, and } from 'drizzle-orm'
 import bcrypt from 'bcrypt'
-import { accessToken, refreshToken } from '../utils/generateToken.js'
+import { accessToken, refreshToken } from '../../utils/generateToken.js'
 
 const router = express.Router()
 

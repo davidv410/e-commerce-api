@@ -1,10 +1,10 @@
 import 'dotenv/config'
 import express from 'express'
 import jwt from 'jsonwebtoken'
-import { db } from '../db/db.js'
-import { users } from '../db/schema.js'
+import { db } from '../../db/db.js'
+import { users } from '../../db/schema.js'
 import { eq, and } from 'drizzle-orm'
-import { accessToken } from '../utils/generateToken.js'
+import { accessToken } from '../../utils/generateToken.js'
 
 const router = express.Router()
 

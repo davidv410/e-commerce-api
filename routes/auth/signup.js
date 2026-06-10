@@ -1,9 +1,9 @@
 import express from 'express'
-import {db} from '../db/db.js'
-import { users } from '../db/schema.js'
+import {db} from '../../db/db.js'
+import { users } from '../../db/schema.js'
 import { eq } from 'drizzle-orm'
 import bcrypt from 'bcrypt'
-import { registerSchema } from '../validation/validation.js'
+import { registerSchema } from '../../validation/validation.js'
 
 const router = express.Router()
 
