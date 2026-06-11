@@ -4,6 +4,7 @@ import { product } from '../db/schema.js'
 import { productSchema } from '../validation/validation.js'
 import { protect } from '../middleware/protect.js'
 import { eq } from 'drizzle-orm'
+import { updateProductSchema } from '../validation/validation.js'
 
 const router = express.Router()
 
@@ -11,8 +12,6 @@ router.get('/', async (req, res) => {
     try{
 
         const data = await db.select().from(product)
-
-        if(data.length === 0){ return res.json({ messag: 'No products in database' }) } 
 
         res.status(200).json(data)
 
@@ -31,6 +30,8 @@ router.get('/:id', async (req, res) => {
         
         const [data] = await db.select().from(product).where(eq(product.id, productId))
 
+        if(!data){ return res.status(404).json({ msg: "Product not found" })}
+
         res.status(200).json(data)
 
     }catch(error){
@@ -44,7 +45,7 @@ router.post('/', protect, async (req, res) => {
 
         const result = await productSchema.safeParse(req.body)
 
-        if(!result.success){ return res.status(400).json({ messag: result.error.issues }) }
+        if(!result.success){ return res.status(400).json({ message: result.error.issues }) }
 
         const { name, price, description, stock } = result.data
 
@@ -56,7 +57,7 @@ router.post('/', protect, async (req, res) => {
             userId: req.user.id
         }).returning()
 
-        return res.status(200).json({ message: "Product added", insertedProduct})
+        return res.status(201).json({ message: "Product added", insertedProduct})
 
     }catch(error){
 
@@ -66,21 +67,26 @@ router.post('/', protect, async (req, res) => {
 
 })
 
-router.put('/:id', protect, async (req, res) => {
+router.patch('/:id', protect, async (req, res) => {
     try{
         const productId = req.params.id
 
-        console.log(req.body)
+        const result = updateProductSchema.safeParse(req.body)
 
-        const [updateProduct] = await db.update(product).set(req.body).where(eq(product.id, productId)).returning()
+        if(!result.success){ return res.status(400).json({ message: result.error.issues }) }
+
+        const [updateProduct] = await db.update(product).set(result.data).where(eq(product.id, productId)).returning()
 
         if(!updateProduct){ return res.status(404).json({ message: "Something went wrong, no product found." }) }
 
         return res.status(200).json({ message: `Product ${productId} updated`, updateProduct })
 
     }catch(error){
+
         console.log(error)
+
         return res.status(500).json({ message: 'Server error' })
+
     }
 })
 
