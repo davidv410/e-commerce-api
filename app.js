@@ -5,6 +5,7 @@ import signup from './routes/auth/signup.js'
 import login from './routes/auth/login.js'
 import logout from './routes/auth/logout.js'
 import refresh from './routes/auth/refresh.js'
+import product from './routes/product.js'
 
 const app = express()
 
@@ -17,6 +18,7 @@ app.use('/sign-up', signup)
 app.use('/login', login)
 app.use('/logout', logout)
 app.use('/refresh', refresh)
+app.use('/product', product)
 
 app.listen(PORT, () => {
     console.log(`App is running on ${PORT}`)

@@ -22,7 +22,7 @@ router.post('/', async (req, res) => {
 
         const token = accessToken(user.id)
 
-        res.cookie('token', accessToken, {
+        res.cookie('token', token, {
                 httpOnly: true,
                 secure: true, 
                 sameSite: 'None', 
