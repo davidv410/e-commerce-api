@@ -10,7 +10,7 @@ const router = express.Router()
 
 router.get('/', protect, async (req, res) => {
     try{
-        
+
         const [userCart] = await db.select()
         .from(cart)
         .where(eq(cart.userId, req.user.id))
@@ -75,7 +75,52 @@ router.post('/', protect, async (req, res) => {
     }
 })
 
-router.patch
+router.patch('/product/:id', protect, async (req, res) => {
+
+    try{
+        const { quantity } = req.body
+    
+        if (typeof(quantity) || quantity < 0) { return res.status(400).json({ message: 'Invalid quantity' }) }
+    
+        const [findCart] = await db.select()
+        .from(cart)
+        .where(
+        eq(cart.userId, req.user.id)) 
+    
+        if(!findCart){ return res.status(404).json({ message: 'cart empty' }) }
+    
+        const [findItem] = await db.select()
+        .from(cartItems)
+        .where(
+            and(
+            eq(cartItems.productId, req.params.id),
+            eq(cartItems.cartId, findCart.id)))
+    
+        if(!findItem){ return res.status(404).json({ message: 'Product not found in cart' }) }
+    
+    
+        if(quantity === 0){
+    
+            await db.delete(cartItems)
+            .where(
+                eq(cartItems.productId, req.params.id))
+    
+            return res.status(200).json({ message: "Item deleted!" })
+    
+        }
+    
+        const [updateQuantity] = await db.update(cartItems)
+        .set({ quantity: quantity })
+        .where(
+            eq(cartItems.productId, req.params.id))
+        .returning()
+    
+        return res.status(200).json({ message: "Quantity updated!" })
+    }catch(error){
+        return res.status(500).json({ message: "Server error" })
+    }
+
+})
 
 router.delete('/product/:id', protect, async (req, res) => {
 
