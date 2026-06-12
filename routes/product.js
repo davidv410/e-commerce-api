@@ -5,22 +5,53 @@ import { productSchema } from '../validation/validation.js'
 import { protect } from '../middleware/protect.js'
 import { eq } from 'drizzle-orm'
 import { updateProductSchema } from '../validation/validation.js'
+import { ilike, gt, lt, and, desc, sql } from 'drizzle-orm'
 
 const router = express.Router()
 
 router.get('/', async (req, res) => {
+// http://localhost:5000/product?search=monster&minPrice=1&maxPrice=5&page=1&limit=20
     try{
+        const { search, minPrice, maxPrice } = req.query
+    
+        const page = Number(req.query.page) || 1
 
-        const data = await db.select().from(product)
+        const limit = Number(req.query.limit) || 20
 
-        res.status(200).json(data)
+        const offset = (page - 1) * limit
+    
+        const filters = []
+    
+        if(search && typeof(search) === 'string'){
+
+            filters.push(ilike(product.name, `%${search}%`))
+
+        }
+    
+        if(minPrice){ filters.push(gt(product.price, minPrice)) }
+
+        if(maxPrice){ filters.push(lt(product.price, maxPrice)) }
+    
+        const [products, [{ count }]] = await Promise.all([
+            db.select().from(product)
+            .where(filters.length > 0 ? and(...filters) : undefined)
+            .limit(limit)
+            .offset(offset)
+            .orderBy(desc(product.createdAt)),
+    
+            db.select({ count: sql`count(*)::int` })
+            .from(product)
+            .where(filters.length > 0 ? and(...filters) : undefined)
+        ])
+    
+        res.status(200).json({ products, total: count, page, limit })
 
     }catch(error){
 
         console.log(error)
 
-        return res.status(500).json({ message: 'Server error' })
-
+        res.status(500).json({ message: 'Server error' })
+        
     }
 })
 
