@@ -28,3 +28,16 @@ export const productImages = pgTable('product_images', {
     imageUrl: varchar('image_url', { length: 500 }).notNull(),
     productId: integer('product_id').notNull().references(() => product.id, { onDelete: 'cascade' })
 })
+
+export const cart = pgTable('cart', {
+    id: serial('id').primaryKey(),
+    userId: integer('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at').defaultNow()
+})
+
+export const cartItems = pgTable('cart_items', {
+    id: serial('id').primaryKey(),
+    cartId: integer('cart_id').notNull().references(() => cart.id, { onDelete: 'cascade' }),
+    productId: integer('product_id').notNull().references(() => product.id, { onDelete: 'cascade' }),
+    quantity: integer('quantity').notNull().default(0)
+})
