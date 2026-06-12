@@ -6,6 +6,7 @@ import login from './routes/auth/login.js'
 import logout from './routes/auth/logout.js'
 import refresh from './routes/auth/refresh.js'
 import product from './routes/product.js'
+import cart from './routes/cart.js'
 
 const app = express()
 
@@ -19,6 +20,7 @@ app.use('/login', login)
 app.use('/logout', logout)
 app.use('/refresh', refresh)
 app.use('/product', product)
+app.use('/cart', cart)
 
 app.listen(PORT, () => {
     console.log(`App is running on ${PORT}`)
