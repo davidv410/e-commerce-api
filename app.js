@@ -7,10 +7,14 @@ import logout from './routes/auth/logout.js'
 import refresh from './routes/auth/refresh.js'
 import product from './routes/product.js'
 import cart from './routes/cart.js'
+import webhook from './routes/webhook.js'
+import checkout from './routes/checkout.js'
 
 const app = express()
 
 const PORT = process.env.PORT || 5000
+
+app.use('/webhook', webhook)
 
 app.use(express.json())
 app.use(cookieParser())
@@ -21,6 +25,7 @@ app.use('/logout', logout)
 app.use('/refresh', refresh)
 app.use('/product', product)
 app.use('/cart', cart)
+app.use('/checkout', checkout)
 
 app.listen(PORT, () => {
     console.log(`App is running on ${PORT}`)
