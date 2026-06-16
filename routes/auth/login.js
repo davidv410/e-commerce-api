@@ -30,9 +30,9 @@ router.post('/', async (req, res) => {
         const compare = await bcrypt.compare(password, user.password)
 
         if(!compare){ return res.status(401).json({ message: 'Invalid credentials' })}
-
-        const token = accessToken(user.id)
-        const refresh = refreshToken(user.id)
+    
+        const token = accessToken(user.id, user.role)
+        const refresh = refreshToken(user.id, user.role)
 
         await db.update(users).set({ refreshToken: refresh }).where(eq(users.id, user.id))
 
@@ -40,14 +40,14 @@ router.post('/', async (req, res) => {
                 httpOnly: true,
                 secure: true, 
                 sameSite: 'None', 
-                maxAge: 900000  //15min
+                maxAge: 60 * 60 * 1000  //1h
         })
 
         res.cookie('refreshToken', refresh, {
                 httpOnly: true,
                 secure: true, 
                 sameSite: 'None', 
-                maxAge: 604800000  //7h
+                maxAge: 7 * 24 * 60 * 60 * 1000  //7d
         })
 
         res.status(200).json({ message: 'User successfully logged in!' })

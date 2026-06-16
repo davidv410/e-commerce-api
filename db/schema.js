@@ -1,5 +1,5 @@
 //id, name, email, password, role, createdAt
-import { pgTable, pgEnum, serial, varchar, timestamp, numeric, text, integer } from 'drizzle-orm/pg-core'
+import { pgTable, pgEnum, serial, varchar, timestamp, numeric, text, integer, uuid } from 'drizzle-orm/pg-core'
 
 export const rolesEnum = pgEnum('roles', ["admin", "user"])
 
@@ -24,9 +24,11 @@ export const product = pgTable('product', {
 })
 
 export const productImages = pgTable('product_images', {
-    id: serial('id').primaryKey(),
+    id: uuid('id').primaryKey().defaultRandom(),
+    key: text('key').notNull(),
     imageUrl: varchar('image_url', { length: 500 }).notNull(),
-    productId: integer('product_id').notNull().references(() => product.id, { onDelete: 'cascade' })
+    productId: integer('product_id').notNull().references(() => product.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at').defaultNow()
 })
 
 export const cart = pgTable('cart', {

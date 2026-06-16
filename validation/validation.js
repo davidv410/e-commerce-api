@@ -13,9 +13,9 @@ export const loginSchema = z.object({
 
 export const productSchema = z.object({
     name: z.string().min(1, 'Name is required'),
-    price: z.number({ required_error: 'Price is required' }).positive("Price must be greater than 0"),
+    price: z.coerce.number({ required_error: 'Price is required' }).positive("Price must be greater than 0"),
     description: z.string().min(10, "Description is required"),
-    stock: z.number({ required_error: 'Stock is required' }).int("Stock cannot be negative")
+    stock: z.coerce.number({ required_error: 'Stock is required' }).int("Stock cannot be negative")
 })
 
 export const updateProductSchema = productSchema.partial() .refine(data => Object.keys(data).length > 0,{ message: 'At least one field must be provided' })

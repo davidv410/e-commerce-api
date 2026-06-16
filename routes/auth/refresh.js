@@ -20,13 +20,14 @@ router.post('/', async (req, res) => {
 
         if(!user || user.refreshToken !== refreshToken){ return res.status(403).json({ message: 'Bad refresh token' })}
 
-        const token = accessToken(user.id)
+        const token = accessToken(user.id, user.role)
 
+        res.clearCookie('token')
         res.cookie('token', token, {
                 httpOnly: true,
                 secure: true, 
-                sameSite: 'None', 
-                maxAge: 900000  //15min
+                sameSite: 'None',
+                maxAge: 60 * 60 * 1000  //1h
         })
 
         res.status(200).json({ message: "Token refreshed" })
