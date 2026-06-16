@@ -1,62 +1,9 @@
 import express from 'express'
-import { loginSchema } from '../../validation/validation.js'
-import { db } from '../../db/db.js'
-import { users } from '../../db/schema.js'
-import { eq, and } from 'drizzle-orm'
-import bcrypt from 'bcrypt'
-import { accessToken, refreshToken } from '../../utils/generateToken.js'
+import { login } from '../../controllers/auth.controller.js'
 
 const router = express.Router()
 
-router.get('/', (req, res) => {
-    console.log(req.cookies)
-})
-
-router.post('/', async (req, res) => {
-
-    try{
-        const result = loginSchema.safeParse(req.body)
-    
-        if(!result.success){
-            return res.status(400).json({ messag: result.error.issues })
-        }
-    
-        const { email, password } = result.data
-
-        const [user] = await db.select().from(users).where(eq(users.email, email))
-
-        if(!user){ return res.status(404).json({ messag: 'User not found' }) }
-
-        const compare = await bcrypt.compare(password, user.password)
-
-        if(!compare){ return res.status(401).json({ message: 'Invalid credentials' })}
-    
-        const token = accessToken(user.id, user.role)
-        const refresh = refreshToken(user.id, user.role)
-
-        await db.update(users).set({ refreshToken: refresh }).where(eq(users.id, user.id))
-
-        res.cookie('token', token, {
-                httpOnly: true,
-                secure: true, 
-                sameSite: 'None', 
-                maxAge: 60 * 60 * 1000  //1h
-        })
-
-        res.cookie('refreshToken', refresh, {
-                httpOnly: true,
-                secure: true, 
-                sameSite: 'None', 
-                maxAge: 7 * 24 * 60 * 60 * 1000  //7d
-        })
-
-        res.status(200).json({ message: 'User successfully logged in!' })
-        
-    }catch(error){
-        console.log(error.message)
-
-        return res.status(500).json({ messsage: 'Server error' })
-    }
-})
+router.get('/', (req, res) => { console.log(req.cookies) })
+router.post('/', login)
 
 export default router

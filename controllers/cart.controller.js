@@ -1,4 +1,3 @@
-import { cart } from '../db/schema.js'
 import * as cartService from '../services/cart.service.js'
 
 export const getCart = async (req, res) => {

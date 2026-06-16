@@ -10,9 +10,8 @@ export const uploadProductImage = async (files, productId) => {
     for(const file of files){
         try{
             const type = await fileTypeFromBuffer(file.buffer)
-            if(!type || !ALLOWED_MIME_TYPES.includes(type.mime)){
-                continue
-            }
+            if(!type || !ALLOWED_MIME_TYPES.includes(type.mime)){ continue }
+            
             const id = crypto.randomUUID()
             const extension = type.ext
             const filename = `${id}.${extension}`

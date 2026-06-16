@@ -1,7 +1,7 @@
 import { db } from '../db/db.js'
 import { product } from '../db/schema.js'
 import { productSchema, updateProductSchema } from '../validation/validation.js'
-import { uploadProductImage } from './image.service.js' //promjenit ime
+import { uploadProductImage } from './image.service.js'
 import { eq, and, ilike, gt, lt, desc, sql } from 'drizzle-orm'
 
 export const getProducts = async (query) => {
@@ -36,8 +36,10 @@ export const getProducts = async (query) => {
 
 export const getProduct = async (id) => {
     const productId = id
+
     const [data] = await db.select().from(product).where(eq(product.id, productId))
     if(!data){ return { status: 404, message: "Product not found" }}
+
     return { status: 200, message: data }
 }
 
@@ -61,16 +63,21 @@ export const createProduct = async (body, id, files) => {
 
 export const updateProduct = async (id, body, userId) => {
     const productId = id
+
     const result = updateProductSchema.safeParse(body)
     if(!result.success){ return { status: 400, message: result.error.issues } }
+
     const [updateProduct] = await db.update(product).set(result.data).where(and(eq(product.id, productId), eq(product.userId, userId))).returning()
     if(!updateProduct){ return { satus: 404, message: "Something went wrong, no product found." } }
+
     return { status: 200 ,message: `Product ${productId} updated`, updateProduct }
 }
 
 export const deleteProduct = async (id, userId) => {
     const productId = id
+
     const [removeProduct] = await db.delete(product).where(and(eq(product.id, productId), eq(product.userId, userId))).returning()
     if(!removeProduct){ return { status: 404, message: "Something went wrong, no product found." } }
+    
     return { status: 200, message: `Product ${productId} removed`, removeProduct }
 }

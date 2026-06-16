@@ -1,13 +1,6 @@
 import express from 'express'
-import { db } from '../db/db.js'
-import { product } from '../db/schema.js'
-import { productSchema } from '../validation/validation.js'
 import { protect } from '../middleware/protect.js'
-import { eq } from 'drizzle-orm'
-import { updateProductSchema } from '../validation/validation.js'
-import { ilike, gt, lt, and, desc, sql } from 'drizzle-orm'
 import { upload } from '../middleware/upload.js'
-
 import { getProducts, getProduct, createProduct, updateProduct, deleteProduct } from '../controllers/product.controller.js'
 
 const router = express.Router()
