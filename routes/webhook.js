@@ -20,8 +20,6 @@ router.post('/', express.raw({ type: 'application/json' }), (req, res) => {
 
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
-
-
         //NAPRAVIT TABLU DI PISE DA JE PLACENO, order status
         //OCISTIT USEROV CART
         //POSLAT MAIL
