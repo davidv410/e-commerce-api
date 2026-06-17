@@ -21,8 +21,8 @@ export const login = async (body) => {
     const compare = await bcrypt.compare(password, user.password)
     if(!compare){ return { status: 401, message: 'Invalid credentials' }}
 
-    const token = accessToken(user.id, user.role)
-    const refresh = refreshToken(user.id, user.role)
+    const token = accessToken(user.id, user.role, user.email)
+    const refresh = refreshToken(user.id, user.role, user.email)
     
     await db.update(users).set({ refreshToken: refresh }).where(eq(users.id, user.id))
     
@@ -38,7 +38,7 @@ export const refresh = async (cookies) => {
     const [user] = await db.select().from(users).where(eq(users.id, decode.id))
     if(!user || user.refreshToken !== refreshToken){ return { status: 400, message: 'Bad refresh token' }}
 
-    const token = accessToken(user.id, user.role)
+    const token = accessToken(user.id, user.role, user.email)
 
     return {status: 200, message: "Token refreshed", token }
 }

@@ -5,7 +5,7 @@ import { db } from '../db/db.js'
 import { cart, cartItems, product } from '../db/schema.js'
 import { eq } from 'drizzle-orm'
 
-export const checkout = async (id) => {
+export const checkout = async (id, email) => {
     try{
       const getItems = await db.select({ name: product.name, price: product.price, quantity: cartItems.quantity})
       .from(cartItems)
@@ -26,7 +26,7 @@ export const checkout = async (id) => {
           },
           quantity: item.quantity
         })),
-        metadata: { userId: id },
+        metadata: { userId: id, email: email },
         success_url: `${process.env.BASE_URL}/success`,
         cancel_url: `${process.env.BASE_URL}/cancel`,
       })

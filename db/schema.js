@@ -43,3 +43,12 @@ export const cartItems = pgTable('cart_items', {
     productId: integer('product_id').notNull().references(() => product.id, { onDelete: 'cascade' }),
     quantity: integer('quantity').notNull().default(0)
 })
+
+export const orders = pgTable('orders', {
+    orderId: serial('id').primaryKey(),
+    userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+    email: varchar('email', { length: 255 }).notNull(),
+    amount: numeric('amount', { precision: 10, scale: 2 }).notNull(),
+    status: text('status').default('paid').notNull(),
+    createdAt: timestamp('created_at').defaultNow()
+})

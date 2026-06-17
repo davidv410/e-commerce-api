@@ -5,50 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1781048376404,
-      "tag": "0000_curvy_layla_miller",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1781109880262,
-      "tag": "0001_hesitant_ezekiel_stane",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1781192051593,
-      "tag": "0002_third_shape",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1781273926951,
-      "tag": "0003_known_skullbuster",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1781625091147,
-      "tag": "0004_acoustic_alex_power",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1781627046250,
-      "tag": "0005_light_microchip",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1781627061109,
-      "tag": "0006_closed_thundra",
+      "when": 1781680502339,
+      "tag": "0000_long_rafael_vega",
       "breakpoints": true
     }
   ]
