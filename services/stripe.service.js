@@ -1,26 +1,40 @@
 import Stripe from 'stripe'
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-export const checkout = async (body, id) => {
-    //OVDJE CU MORAT DODAT ZAPRAVO SELECT IZ CARTA, BAZE
+import { db } from '../db/db.js'
+import { cart, cartItems, product } from '../db/schema.js'
+import { eq } from 'drizzle-orm'
 
-    const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      line_items: body.items.map(item => ({
-        price_data: {
-            //NOVAC PROMJENIT
-          currency: 'usd',
-          product_data: { name: item.name },
-            //CIJENA IZ BAZE
-          unit_amount: item.price,
-        },
-        quantity: item.quantity,
-      })),
-      //TREBO BI EMAIL UMJESTO ID
-      metadata: { userId: id },
-      success_url: `${process.env.BASE_URL}/success`,
-      cancel_url: `${process.env.BASE_URL}/cancel`,
-    });
+export const checkout = async (id) => {
+    try{
+      const getItems = await db.select({ name: product.name, price: product.price, quantity: cartItems.quantity})
+      .from(cartItems)
+      .innerJoin(cart, eq(cart.id, cartItems.cartId))
+      .innerJoin(product, (eq(product.id, cartItems.productId)))
+      .where(eq(cart.userId, id))
 
-    return { status: 200, url: session.url }
+      if(!getItems.length) {
+        return { status: 400, data: [] }
+      }
+      const session = await stripe.checkout.sessions.create({
+        mode: 'payment',
+        line_items: getItems.map(item => ({
+          price_data: {
+            currency: 'eur',
+            product_data: { name: item.name },
+            unit_amount: Math.round(Number(item.price) * 100)
+          },
+          quantity: item.quantity
+        })),
+        metadata: { userId: id },
+        success_url: `${process.env.BASE_URL}/success`,
+        cancel_url: `${process.env.BASE_URL}/cancel`,
+      })
+
+      return { status: 200, url: session.url }
+      
+    }catch(error){
+      console.log(error)
+      return { status: 500, message: error }
+    }
 }
